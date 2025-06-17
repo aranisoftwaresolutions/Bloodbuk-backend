@@ -310,9 +310,11 @@ export const getAllProducts = catchAsyncErrors(async (req, res) => {
 
 export const getSingleProduct = catchAsyncErrors(async (req, res) => {
     try {
-        if (!req.params.id || req.params.id.length !== 24) {
+        const { id } = req.params;
+        if (!id || id.length !== 24) {
             return res.status(400).json({ message: "Invalid Product ID" });
         }
+
         const product = await Product.findById(req.params.id)
             .populate("category", "name")
             .populate("subcategory", "name")
@@ -322,7 +324,21 @@ export const getSingleProduct = catchAsyncErrors(async (req, res) => {
             return res.status(404).json({ success: false, message: "Product Not Found" });
         }
 
-        res.status(200).json({ success: true, product });
+        // compute review stats
+        const totalReviews = product.reviews.length;
+        const averageRating = totalReviews > 0
+            ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
+            : 0;
+
+        // respond with both the raw product and the stats
+        res.status(200).json({
+            success: true,
+            product: product.toObject(),   // convert mongoose doc → plain JS
+            totalReviews,
+            averageRating
+        });
+
+        
     } catch (error) {
         console.error("Error Fetching Product:", error);
         res.status(500).json({ message: "Server error", error: error.message });

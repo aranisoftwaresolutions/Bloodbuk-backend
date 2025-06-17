@@ -7,30 +7,21 @@ const paymentSchema = new mongoose.Schema(
             ref: "Order",
             required: true,
         },
-        paymentId: {
-            type: String,
-            required: true,
-        },
-        payerId: {
-            type: String,
-            required: true,
-        },
+        razorpayPaymentId: String,
+        razorpayOrderId: String,
+        razorpaySignature: String,
         status: {
             type: String,
             enum: ["Pending", "Completed", "Failed"],
             default: "Pending",
         },
-        amount: {
-            type: Number,
-            required: true,
-        },
+        amount: Number,
         currency: {
             type: String,
-            default: "USD",
+            default: "INR",
         },
     },
     { timestamps: true }
 );
 
-const Payment = mongoose.model("Payment", paymentSchema);
-export default Payment;
+export default mongoose.model("Payment", paymentSchema);

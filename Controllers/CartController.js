@@ -146,7 +146,7 @@ export const deleteCartItem = async (req, res) => {
         if (!colorName) {
             return res.status(400).json({ success: false, message: "ColorName is required!" });
         }
-        
+
         const cart = await Cart.findOne({ userId });
         if (!cart) {
             return res.status(404).json({ success: false, message: "Cart not found!" });
@@ -169,28 +169,36 @@ export const deleteCartItem = async (req, res) => {
     }
 };
 
-// -----------------------------------------------------------------------------
-// Clear Ordered Products from the Cart
-// -----------------------------------------------------------------------------
-export const clearOrderedProducts = async (req, res) => {
-    const { userId } = req.params;
-    const { orderedItems } = req.body; // Array of ordered product IDs
+
+export const clearOrderedItems = async (req, res) => {
     try {
+        const { userId } = req.params;
+        const { orderedItems } = req.body;
+
+        if (!orderedItems || !Array.isArray(orderedItems)) {
+            return res.status(400).json({ message: "No products to remove" });
+        }
+
         const cart = await Cart.findOne({ userId });
         if (!cart) {
-            return res.status(404).json({ success: false, message: "Cart not found!" });
+            return res.status(404).json({ message: "Cart not found" });
         }
+
         cart.items = cart.items.filter(
             (item) => !orderedItems.includes(item.productId.toString())
         );
+
         await cart.save();
-        res.status(200).json({
-            success: true,
-            message: "Ordered products removed from the cart successfully!",
-            cart,
-        });
+
+        res.status(200)
+            .json({
+                success: true,
+                message: "Ordered items removed from cart",
+                cart: {
+                    items: cart.items,
+                },
+            });
     } catch (error) {
-        console.error("Error clearing ordered products:", error);
-        res.status(500).json({ success: false, message: "Internal server error" });
+        res.status(500).json({ message: error.message });
     }
 };

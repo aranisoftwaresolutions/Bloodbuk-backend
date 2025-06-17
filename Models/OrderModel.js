@@ -16,8 +16,6 @@ const schema = new mongoose.Schema({
             quantity: Number,
             price: Number,
             imageUrl: String,
-            selectedSize: String,
-            selectedSeamSize: String,
             selectedColorName: String,
             reviewed: { type: Boolean, default: false },
         },
