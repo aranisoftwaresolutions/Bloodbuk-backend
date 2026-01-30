@@ -6,6 +6,7 @@ import { connectDB } from "./database/database.js";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 
+
 // ErrorHandler
 import { errorMiddleware } from "./middlewares/errorHandling.js";
 
