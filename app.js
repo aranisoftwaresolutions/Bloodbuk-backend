@@ -12,7 +12,7 @@ import { errorMiddleware } from "./middlewares/errorHandling.js";
 
 // Load environment variables
 dotenv.config({
-  path: "./database/.env",
+  path: "./database/.env",  
 });
 
 const app = express();
